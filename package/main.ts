@@ -1,16 +1,7 @@
 import { PathLike } from 'fs';
 import { UserConfig, ViteDevServer } from 'vite';
 import { redirect, scan, watchDir } from './service';
-
-export interface Options {
-    dir?: PathLike;
-    templateName?: string;
-}
-
-export const defaultOptions = {
-    dir: 'src/pages',
-    templateName: 'index.html',
-};
+import { defaultOptions, Options } from "./types";
 
 export const routesMap = new Map<string | PathLike, string>();
 
