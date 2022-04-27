@@ -1,11 +1,12 @@
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-    build:{
+    build: {
+        target:'node16',
         lib: {
             entry: 'package/main.ts',
-            formats: ['es', 'cjs'],
-            fileName: 'main'
+            fileName: 'main',
+            name: 'VitePluginFileSystemMultiPages',
         },
     },
     plugins: [],

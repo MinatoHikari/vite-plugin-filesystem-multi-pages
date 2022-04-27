@@ -2,7 +2,6 @@
   "compilerOptions": {
     "target": "ESNext",
     "useDefineForClassFields": true,
-    "module": "ESNext",
     "lib": ["ESNext", "DOM"],
     "moduleResolution": "Node",
     "strict": true,
@@ -14,9 +13,10 @@
     "noUnusedParameters": false,
     "noImplicitReturns": true,
     "skipLibCheck": true,
-    "emitDeclarationOnly": true,
+    "emitDeclarationOnly": false,
     "declaration": true,
-    "outDir": "./dist/types"
+    "module": "CommonJS",
+    "outDir": "./dist",
   },
   "include": ["package/*.ts"]
 }

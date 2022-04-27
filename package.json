@@ -1,21 +1,14 @@
 {
   "name": "vite-plugin-filesystem-multi-pages",
   "author": "MinatoHikari",
-  "version": "0.1.0",
-  "main": "./dist/main.cjs.js",
-  "module": "./dist/main.es.js",
-  "types": "./dist/types/main.d.ts",
-  "exports": {
-    ".": {
-      "import": "./dist/main.es.js",
-      "require": "./dist/main.cjs.js"
-    }
-  },
+  "version": "0.1.4",
+  "main": "dist/main.js",
+  "types": "dist/types/main.d.ts",
   "repository": "https://github.com/MinatoHikari/vite-plugin-filesystem-multi-pages",
   "license": "MIT",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build && tsc --build tsconfig.build.json",
+    "build": "tsc --build tsconfig.build.json",
     "preview": "vite preview"
   },
   "devDependencies": {

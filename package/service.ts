@@ -1,10 +1,10 @@
 import ErrnoException = NodeJS.ErrnoException;
-import fs, { PathLike, WatchEventType } from 'fs';
+import { PathLike, WatchEventType } from 'fs';
 import path from 'path';
-import { routesMap } from './main';
-import { addPrefSlash, addSlash } from './utils';
+import fs from 'fs';
+import { addPrefSlash, addSlash, routesMap } from './utils';
 import { ViteDevServer } from 'vite';
-import { Options } from "./types";
+import { Options } from './types';
 
 export const scan = (mergedOptions: Required<Options>, sourceUrl: PathLike) => {
     fs.readdir(sourceUrl, (err: ErrnoException | null, files: string[]) => {

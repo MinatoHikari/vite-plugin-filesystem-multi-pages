@@ -1,9 +1,6 @@
-import { PathLike } from 'fs';
 import { UserConfig, ViteDevServer } from 'vite';
 import { redirect, scan, watchDir } from './service';
 import { defaultOptions, Options } from "./types";
-
-export const routesMap = new Map<string | PathLike, string>();
 
 export default function VitePluginFileSystemMultiPages(options?: Options) {
     const mergedOptions = {
