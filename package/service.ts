@@ -2,21 +2,30 @@ import ErrnoException = NodeJS.ErrnoException;
 import { PathLike, WatchEventType } from 'fs';
 import path from 'path';
 import fs from 'fs';
-import { addPrefSlash, addSlash, routesMap } from './utils';
+import { addPrefSlash, addSlash, getScanName, routesMap, templateCompile } from './utils';
 import { ViteDevServer } from 'vite';
-import { Options } from './types';
+import { ReplaceParams } from "./types";
 
-export const scan = (mergedOptions: Required<Options>, sourceUrl: PathLike) => {
+export const scan = (
+    mergedOptions: {
+        templateName: string;
+        dir: string | PathLike;
+        publicTemplateSrc?: string;
+        scanFileName?: string;
+    },
+    sourceUrl: PathLike,
+) => {
+    const scanName = getScanName(mergedOptions);
     fs.readdir(sourceUrl, (err: ErrnoException | null, files: string[]) => {
         // 解析文件类型，如果是目录则继续向目录内遍历
         // console.log(files)
         for (const key of files) {
-            if (key === mergedOptions.templateName) {
+            if (key === scanName) {
                 const mapKey =
                     (sourceUrl as string)
                         .replace(mergedOptions.dir as string, '')
                         .replaceAll('\\', '/') || '/';
-                routesMap.set(mapKey, path.join(sourceUrl as string, mergedOptions.templateName));
+                routesMap.set(mapKey, path.join(sourceUrl as string, scanName));
                 // console.log('mapkey:', mapKey)
                 // console.log('mapsource:', routesMap.get(mapKey))
             }
@@ -33,36 +42,61 @@ export const scan = (mergedOptions: Required<Options>, sourceUrl: PathLike) => {
 };
 
 export function watchDir(mergedOptions: { templateName: string; dir: string | PathLike }) {
-    fs.watch(mergedOptions.dir, { recursive: true }, (e: WatchEventType, filename: string) => {
-        if (e === 'rename') {
-            const filePath = path.join(mergedOptions.dir as string, filename);
-            const mapKey = addPrefSlash(
-                filename.replaceAll('\\', '/').replace(`/${mergedOptions.templateName}`, ''),
-            );
-            if (fs.existsSync(filePath) && filename.endsWith(mergedOptions.templateName)) {
-                console.log(mapKey);
-                routesMap.set(mapKey, filePath);
-            } else {
-                routesMap.has(mapKey) && routesMap.delete(mapKey);
+    const scanName = getScanName(mergedOptions);
+    return fs.watch(
+        mergedOptions.dir,
+        { recursive: true },
+        (e: WatchEventType, filename: string) => {
+            if (e === 'rename') {
+                const filePath = path.join(mergedOptions.dir as string, filename);
+                const mapKey = addPrefSlash(
+                    filename.replaceAll('\\', '/').replace(`/${scanName}`, ''),
+                );
+                if (fs.existsSync(filePath) && filename.endsWith(scanName)) {
+                    routesMap.set(mapKey, filePath);
+                } else {
+                    routesMap.has(mapKey) && routesMap.delete(mapKey);
+                }
             }
-        }
-    });
+        },
+    );
 }
 
 export function redirect(
     server: ViteDevServer,
-    mergedOptions: { templateName: string; dir: string | PathLike },
+    mergedOptions: {
+        templateName: string;
+        dir: string | PathLike;
+        publicTemplateSrc?: string;
+        scanFileName?: string;
+        replace?: ReplaceParams;
+    },
 ) {
     server.middlewares.use((req, res, next) => {
         if (req.url) {
             const urlWithSlash = addSlash(req.url as string);
             if (routesMap.has(req.url) || routesMap.has(urlWithSlash)) {
-                req.url = addPrefSlash(
-                    [mergedOptions.dir as string, req.url, mergedOptions.templateName].join('/'),
-                );
+                if (!mergedOptions.publicTemplateSrc) {
+                    req.url = addPrefSlash(
+                        [mergedOptions.dir as string, req.url, mergedOptions.templateName].join(
+                            '/',
+                        ),
+                    );
+                } else {
+                    const scanFile = getScanName(mergedOptions);
+                    const filePath = path.join(
+                        mergedOptions.dir as string,
+                        req.url,
+                        scanFile,
+                    );
+                    const content = fs.readFileSync(mergedOptions.publicTemplateSrc).toString();
+                    res.setHeader('200', 'ok');
+                    res.write(templateCompile(content, mergedOptions.replace || {}, filePath));
+                    res.end();
+                    return;
+                }
             }
         }
-
         next();
     });
 }
