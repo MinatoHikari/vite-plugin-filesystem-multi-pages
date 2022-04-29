@@ -5,11 +5,13 @@ import {
     addPrefSlash,
     addSlash,
     deletePrefSlash,
+    deleteSlash,
     getScanName,
+    rmDir,
     routesMap,
     templateCompile,
 } from './utils';
-import { ResolvedConfig, ViteDevServer } from 'vite';
+import { ResolvedConfig, ViteDevServer, normalizePath } from 'vite';
 import { ReplaceParams } from './types';
 
 export const scan = (
@@ -88,7 +90,7 @@ export function redirect(
                 if (!mergedOptions.publicTemplateSrc) {
                     req.url = addPrefSlash([dir, req.url, mergedOptions.templateName].join('/'));
                 } else {
-                    const filePath = path.join(dir, req.url);
+                    const filePath = addPrefSlash(path.join(dir, req.url));
                     const content = fs.readFileSync(mergedOptions.publicTemplateSrc).toString();
                     res.setHeader('200', 'ok');
                     res.write(templateCompile(content, mergedOptions.replace || {}, filePath));
@@ -124,9 +126,61 @@ export function initBuildOptions(
             config.root,
             mergedOptions.dir as string,
             keyPath,
-            mergedOptions.templateName,
+            mergedOptions.templateName ?? 'index.html',
         );
-        console.log(path.join(config.root, mergedOptions.dir as string, keyPath));
         next = itr.next();
     }
+}
+
+export function transformTemplate(
+    publicTemplateSrc: string,
+    id: string,
+    mergedOptions: {
+        templateName: string;
+        replace?: ReplaceParams;
+        dir: string | PathLike;
+        publicPath: string;
+        publicTemplateSrc?: string;
+        scanFileName?: string;
+    },
+) {
+    const content = fs.readFileSync(publicTemplateSrc).toString();
+    const filePath = deleteSlash(
+        id.replace(publicTemplateSrc, '').replace(mergedOptions.templateName ?? '/index.html', ''),
+    );
+    console.log('id:', filePath);
+    return `${templateCompile(content, mergedOptions.replace || {}, filePath)}`;
+}
+
+export function movePageFiles(
+    config: ResolvedConfig,
+    mergedOptions: {
+        templateName: string;
+        replace?: ReplaceParams;
+        dir: string | PathLike;
+        publicPath: string;
+        publicTemplateSrc?: string;
+        scanFileName?: string;
+    },
+) {
+    fs.cp(
+        path.join(`${config.root}`, `${config.build.outDir}`, `${mergedOptions.dir}`),
+        path.join(`${config.root}`, `${mergedOptions.publicPath}`),
+        {
+            recursive: true,
+        },
+        (err) => {
+            console.log(err);
+            if (!err) {
+                const removedDir = path.join(
+                    `${config.root}`,
+                    `${config.build.outDir}`,
+                    `${normalizePath(mergedOptions.dir.toString()).split('/')[0]}`,
+                );
+                rmDir(removedDir).then((end) => {
+                    if (end) fs.rmdirSync(removedDir);
+                });
+            }
+        },
+    );
 }

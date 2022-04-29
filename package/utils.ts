@@ -1,5 +1,8 @@
-import { PathLike } from 'fs';
+import fs, { PathLike } from 'fs';
 import { Options, ReplaceParams } from './types';
+import * as path from 'path';
+
+export const routesMap = new Map<string | PathLike, string>();
 
 export const addSlash = (url: string) => {
     if (!url.endsWith('/')) return `${url}/`;
@@ -16,13 +19,17 @@ export const deletePrefSlash = (url: string) => {
     return url;
 };
 
+export const deleteSlash = (url: string) => {
+    if (url.endsWith('/')) return url.slice(0, url.length - 1);
+    return url;
+};
+
 export const getScanName = (options: Options) => {
     if (options.publicTemplateSrc) return options.scanFileName ?? 'main.ts';
     return options.templateName ?? 'index.html';
 };
 
 export const templateCompile = (str: string, params: ReplaceParams, filePath: string) => {
-    console.log(new RegExp('{{s*[a-zA-Z]+s*}}', 'g'));
     const itr = str.matchAll(new RegExp('(?:{{\\s*)([a-zA-Z]+)(?:\\s*}})', 'g'));
     let next = itr.next();
     while (!next.done) {
@@ -36,4 +43,21 @@ export const templateCompile = (str: string, params: ReplaceParams, filePath: st
     return str;
 };
 
-export const routesMap = new Map<string | PathLike, string>();
+export const rmDir = async (source: string, parentFolder?: string): Promise<boolean> => {
+    let childClear = false;
+    const files = fs.readdirSync(source);
+    for (let item of files) {
+        const itemPath = path.join(source, item);
+        const stat = fs.statSync(itemPath);
+        if (stat.isDirectory()) {
+            childClear = await rmDir(itemPath, source);
+        } else {
+            fs.rmSync(itemPath);
+        }
+    }
+    const newFiles = fs.readdirSync(source);
+    if (childClear) {
+        for (let item of newFiles) fs.rmdirSync(path.join(source, item));
+    }
+    return true;
+};

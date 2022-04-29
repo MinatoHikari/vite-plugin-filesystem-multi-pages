@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite';
 import Inspect from 'vite-plugin-inspect';
 import fmpa from './package/main';
-// import path from 'path';
+import path from 'path';
 
 export default defineConfig({
     build: {
@@ -10,12 +10,12 @@ export default defineConfig({
     plugins: [
         Inspect(),
         fmpa({
-            // publicTemplateSrc: path.resolve(__dirname, 'index.html'),
-            // scanFileName: 'main.ts',
-            // replace: {
-            //     title: 'vite app',
-            //     src: (path) => path,
-            // },
+            publicTemplateSrc: path.resolve(__dirname, 'index.html'),
+            scanFileName: 'main.ts',
+            replace: {
+                title: 'vite app',
+                src: (path) => path,
+            },
         }),
     ],
 });

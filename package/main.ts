@@ -1,5 +1,12 @@
 import { IndexHtmlTransformContext, ResolvedConfig, UserConfig, ViteDevServer } from 'vite';
-import { initBuildOptions, redirect, scan, watchDir } from './service';
+import {
+    initBuildOptions,
+    movePageFiles,
+    redirect,
+    scan,
+    transformTemplate,
+    watchDir,
+} from './service';
 import { defaultOptions, Options } from './types';
 import { FSWatcher } from 'fs';
 import { routesMap } from './utils';
@@ -32,16 +39,13 @@ export default function VitePluginFileSystemMultiPages(options?: Options) {
             return html;
         },
         resolveId(id: string) {
-            console.log(id);
             return id;
         },
         load(id: string) {
-            // if (id.endsWith('login.html'))
-            //     return `${fs
-            //         .readFileSync(
-            //             path.join(mergedOptions.dir as string, mergedOptions.templateName),
-            //         )
-            //         .toString()}`;
+            const publicTemplateSrc = mergedOptions.publicTemplateSrc;
+            if (publicTemplateSrc && id.endsWith('.html')) {
+                return transformTemplate(publicTemplateSrc, id, mergedOptions);
+            }
             return;
         },
         transform(code: string, id: string) {
@@ -49,6 +53,11 @@ export default function VitePluginFileSystemMultiPages(options?: Options) {
         },
         buildEnd() {
             watcher.close();
+        },
+        closeBundle() {
+            if (mergedOptions.publicPath) {
+                movePageFiles(config, mergedOptions);
+            }
         },
     };
 }
