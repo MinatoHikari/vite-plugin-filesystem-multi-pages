@@ -3,7 +3,7 @@
 filesystem routes for mpa
 
 <p>
-<a href="https://github.com/MinatoHikari/vite-plugin-filesystem-multi-pages/blob/main/README_ZH.md">English</a> | <b>简体中文</b>
+<a href="https://github.com/MinatoHikari/vite-plugin-filesystem-multi-pages/blob/main/README.md">English</a> | <b>简体中文</b>
 <!-- Contributors: Thanks for geting interested, however we DON'T accept new transitions to the README, thanks. -->
 </p>
 
