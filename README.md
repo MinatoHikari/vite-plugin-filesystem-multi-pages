@@ -2,6 +2,11 @@
 
 filesystem routes for mpa
 
+<p>
+<b>English</b> | <a href="https://github.com/MinatoHikari/vite-plugin-filesystem-multi-pages/blob/main/README_ZH.md">简体中文</a>
+<!-- Contributors: Thanks for geting interested, however we DON'T accept new transitions to the README, thanks. -->
+</p>
+
 ### Install
 
 `npm i -D vite-plugin-filesystem-multi-pages`
@@ -31,6 +36,7 @@ templateName: string
 publicTemplateSrc: string
 // only works in all-in-one template mode
 // define which file to scan, if the file be detected, the folder will be added into routes
+// default: main.ts
 scanFileName: string
 // only works in all-in-one template mode
 // define variables which will replace the {{ xxx }} things in the public template
