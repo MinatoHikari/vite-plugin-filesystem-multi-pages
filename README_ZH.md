@@ -1,6 +1,11 @@
 # vite-plugin-filesystem-multi-pages
 
-filesystem routes for mpa
+基于文件生成路由、构建配置的开箱即用的MPA插件
+
+- 开发模式自动映射路由地址. 和丑陋的 `https://localhost/src/pages/nested/nested/index.html` 说再见。 只需像SPA应用一样访问 `http://localhost/nested/nested` 即可。
+- 自动化 MPA 的打包配置，不用再为每个页面配置 `input`
+- 支持 All-in-one template 模式， 只需少量设置就可以让所有页面使用同一个 html 模板。
+
 
 <p>
 <a href="https://github.com/MinatoHikari/vite-plugin-filesystem-multi-pages/blob/main/README.md">English</a> | <b>简体中文</b>

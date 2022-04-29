@@ -2,6 +2,10 @@
 
 filesystem routes for mpa
 
+- Automatically set redirect rules for development. No more need to visit `https://localhost/src/pages/nested/nested/index.html`. Just visit `http://localhost/nested/nested` as you do in SPA project.
+- Out of box MPA auto settings when building. No need to set rollup build input options.
+- All-in-one template mode support. All pages can use one template with few settings.
+
 <p>
 <b>English</b> | <a href="https://github.com/MinatoHikari/vite-plugin-filesystem-multi-pages/blob/main/README_ZH.md">简体中文</a>
 <!-- Contributors: Thanks for geting interested, however we DON'T accept new transitions to the README, thanks. -->
