@@ -11,6 +11,11 @@ export const addPrefSlash = (url: string) => {
     return url;
 };
 
+export const deletePrefSlash = (url: string) => {
+    if (url.startsWith('/')) return url.slice(1);
+    return url;
+};
+
 export const getScanName = (options: Options) => {
     if (options.publicTemplateSrc) return options.scanFileName ?? 'main.ts';
     return options.templateName ?? 'index.html';
