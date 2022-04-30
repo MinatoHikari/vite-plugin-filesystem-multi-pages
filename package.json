@@ -1,7 +1,7 @@
 {
   "name": "vite-plugin-filesystem-multi-pages",
   "author": "MinatoHikari",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "main": "dist/main.js",
   "types": "dist/main.d.ts",
   "repository": "https://github.com/MinatoHikari/vite-plugin-filesystem-multi-pages.git",

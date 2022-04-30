@@ -175,7 +175,7 @@ export function movePageFiles(
                 const removedDir = path.join(
                     `${config.root}`,
                     `${config.build.outDir}`,
-                    `${normalizePath(mergedOptions.dir.toString()).split('/')[0]}`,
+                    `${deletePrefSlash(normalizePath(mergedOptions.dir.toString())).split('/')[0]}`,
                 );
                 rmDir(removedDir).then((end) => {
                     if (end) fs.rmdirSync(removedDir);
