@@ -49,7 +49,10 @@ export default function VitePluginFileSystemMultiPages(options?: Options) {
             return;
         },
         transform(code: string, id: string) {
-            return code;
+            return {
+                code,
+                map: null,
+            };
         },
         buildEnd() {
             watcher.close();
