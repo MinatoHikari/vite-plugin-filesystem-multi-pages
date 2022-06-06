@@ -85,8 +85,13 @@ export function redirect(
     server.middlewares.use((req, res, next) => {
         if (req.url) {
             const urlWithSlash = addSlash(req.url as string);
+            const urlWithoutSlash = deleteSlash(urlWithSlash);
             const dir = mergedOptions.dir.toString();
-            if (routesMap.has(req.url) || routesMap.has(urlWithSlash)) {
+            if (
+                routesMap.has(req.url) ||
+                routesMap.has(urlWithSlash) ||
+                routesMap.has(urlWithoutSlash)
+            ) {
                 if (!mergedOptions.publicTemplateSrc) {
                     req.url = addPrefSlash([dir, req.url, mergedOptions.templateName].join('/'));
                 } else {
