@@ -39,14 +39,14 @@ export default function VitePluginFileSystemMultiPages(options?: Options) {
             return html;
         },
         resolveId(id: string) {
-            return id;
+            return null;
         },
         load(id: string) {
             const publicTemplateSrc = mergedOptions.publicTemplateSrc;
             if (publicTemplateSrc && id.endsWith('.html')) {
                 return transformTemplate(publicTemplateSrc, id, mergedOptions);
             }
-            return;
+            return null;
         },
         transform(code: string, id: string) {
             return {
